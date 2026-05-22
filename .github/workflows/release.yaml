@@ -8,13 +8,13 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: github.repository == 'AndresOrtegaGuerrero/aiidalab-qe-pp'
+    if: github.repository == 'aiidalab/aiidalab-qe-pp'
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python 3.11
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Install flit
@@ -24,7 +24,7 @@ jobs:
         env:
           FLIT_USERNAME: __token__
           FLIT_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      - uses: softprops/action-gh-release@v0.1.14
+      - uses: softprops/action-gh-release@v2
         name: Create release
         with:
             files: |
