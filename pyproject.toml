@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "aiidalab-qe-pp"
-version = "0.1.7"
+version = "0.1.8"
 description = "AiiDAlab quantum ESPRESSO app plugin for PP code"
 readme = "README.md"
 license = {file = "LICENSE"}
