@@ -1,6 +1,6 @@
 import traitlets as tl
 from aiida import orm
-from aiidalab_qe.common.panel import ConfigurationSettingsModel
+from aiidalab_qe.common.panel import PanelModel
 from aiidalab_qe.common.mixins import HasInputStructure
 from aiida_quantumespresso.workflows.pw.bands import PwBandsWorkChain
 from aiida_quantumespresso.workflows.pw.base import PwBaseWorkChain
@@ -13,7 +13,7 @@ from aiida.common.exceptions import NotExistent
 import numpy as np
 
 
-class PpConfigurationSettingsModel(ConfigurationSettingsModel, HasInputStructure):
+class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
     title = "Pp Settings"
     dependencies = [
         "structure_uuid",
