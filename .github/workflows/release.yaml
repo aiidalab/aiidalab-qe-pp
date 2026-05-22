@@ -9,6 +9,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     if: github.repository == 'aiidalab/aiidalab-qe-pp'
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout source
