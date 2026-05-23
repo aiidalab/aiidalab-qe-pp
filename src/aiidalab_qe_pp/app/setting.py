@@ -4,13 +4,13 @@ This module contains the settings for the pp plugin in the AiiDAlab Quantum ESPR
 
 import ipywidgets as ipw
 
-from aiidalab_qe.common.panel import PanelModel
+from aiidalab_qe.common.panel import ConfigurationSettingsPanel
 from .model import PpConfigurationSettingsModel
 from .widgets import OrbitalListWidget, OrbitalSelectionWidget
 
 
 class PpConfigurationSettingPanel(
-    PanelModel[PpConfigurationSettingsModel],
+    ConfigurationSettingsPanel[PpConfigurationSettingsModel],
 ):
     title = "Pp settings"
     identifier = "pp"
