@@ -1,9 +1,11 @@
+from typing import Any
+
 from aiida.plugins import CalculationFactory
 from aiida.engine import ToContext, WorkChain, if_
 from aiida import orm
 from aiida.common import AttributeDict
 from aiida_pythonjob.launch import prepare_pythonjob_inputs
-from aiida_pythonjob import PythonJob
+from aiida_pythonjob import PythonJob, spec
 import numpy as np
 from aiidalab_qe_pp.app.utils import resized_cube_files
 
@@ -362,7 +364,7 @@ class PPWorkChain(WorkChain):
         inputs = prepare_pythonjob_inputs(
             function=resized_cube_files,
             code=self.inputs.python,
-            output_ports=[{"name": "results"}],
+            outputs_spec=spec.namespace(results=Any),
             parent_folder=workchain.outputs.remote_folder,
             computer=self.inputs.python.computer,
             register_pickle_by_value=True,
