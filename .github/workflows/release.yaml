@@ -11,6 +11,7 @@ jobs:
     if: github.repository == 'aiidalab/aiidalab-qe-pp'
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - name: Checkout source
@@ -20,15 +21,15 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install flit
-        run: pip install flit~=3.4
+        run: pip install "flit>=3.4,<4"
       - name: Build and publish
         run: flit publish
-        env:
-          FLIT_USERNAME: __token__
-          FLIT_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      - uses: softprops/action-gh-release@v2
-        name: Create release
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
         with:
-            files: |
-              dist/*
-            generate_release_notes: true
+          files: |
+            dist/*
+          generate_release_notes: true
