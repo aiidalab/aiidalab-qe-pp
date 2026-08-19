@@ -98,15 +98,14 @@ def post_install():
         # Create the build directory
         build_dir = critic2_dir / "build"
         build_dir.mkdir(parents=True, exist_ok=True)
-        os.chdir(build_dir)
         try:
             print("Running cmake and make to build critic2...")
-            subprocess.run(["cmake", ".."], check=True)
+            subprocess.run(["cmake", ".."], cwd=build_dir, check=True)
             subprocess.run(
-                ["make -j4"], check=True
-            )  # Adjust the number of jobs as needed
+                ["make", f"-j{os.cpu_count() or 1}"], cwd=build_dir, check=True
+            )
             print("Critic2 installation complete!")
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
             print(f"Error during the installation process: {e}")
 
     click.echo("Setting up aiida critic2 code...")
