@@ -21,11 +21,13 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install flit
-        run: pip install "flit>=3.4,<4"
-      - name: Build and publish
-        run: flit publish
+        run: pip install "flit>=3.4,<4" "flit_core>=3.4,<4"
+      - name: Build
+        run: flit build
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
 
       - name: Create release
         uses: softprops/action-gh-release@v2
