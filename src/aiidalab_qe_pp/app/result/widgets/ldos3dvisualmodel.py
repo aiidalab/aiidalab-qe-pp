@@ -9,12 +9,12 @@ import base64
 from IPython.display import display, Javascript
 import tempfile
 import os
-import threading
+from aiidalab_qe_pp.app.result.widgets.error_timeout import ErrorTimeoutMixin
 
 from aiidalab_qe_pp.app.utils import download_remote_file
 
 
-class Ldos3DVisualModel(Model):
+class Ldos3DVisualModel(ErrorTimeoutMixin, Model):
     node = tl.Instance(WorkChainNode, allow_none=True)
     input_structure = tl.Instance(Atoms, allow_none=True)
     aiida_structure = tl.Instance(StructureData, allow_none=True)
@@ -123,7 +123,7 @@ class Ldos3DVisualModel(Model):
             self.error_message = (
                 f'<div style="color: red; font-weight: bold;">{message}</div>'
             )
-            threading.Timer(10.0, self.clear_error_message).start()
+            self.schedule_error_clear(10.0)
             return
 
         filename = (
@@ -142,6 +142,3 @@ class Ldos3DVisualModel(Model):
             filename,
             filename_retrieved,
         )
-
-    def clear_error_message(self):
-        self.error_message = ""

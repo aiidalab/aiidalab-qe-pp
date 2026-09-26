@@ -11,11 +11,11 @@ from IPython.display import Javascript
 from IPython.display import display
 import tempfile
 import os
-import threading
+from aiidalab_qe_pp.app.result.widgets.error_timeout import ErrorTimeoutMixin
 from aiidalab_qe_pp.app.utils import download_remote_file
 
 
-class WfnVisualModel(Model):
+class WfnVisualModel(ErrorTimeoutMixin, Model):
     node = tl.Instance(WorkChainNode, allow_none=True)
     input_structure = tl.Instance(Atoms, allow_none=True)
     aiida_structure = tl.Instance(StructureData, allow_none=True)
@@ -230,7 +230,7 @@ class WfnVisualModel(Model):
             self.error_message = (
                 f'<div style="color: red; font-weight: bold;">{message}</div>'
             )
-            threading.Timer(3.0, self.clear_error_message).start()
+            self.schedule_error_clear(3.0)
             return
 
         remote_folder = self.node.outputs.wfn[key_dict].remote_folder
@@ -240,7 +240,7 @@ class WfnVisualModel(Model):
             self.error_message = (
                 f'<div style="color: red; font-weight: bold;">{message}</div>'
             )
-            threading.Timer(10.0, self.clear_error_message).start()
+            self.schedule_error_clear(10.0)
             return
 
         filtered_files = [
@@ -262,12 +262,9 @@ class WfnVisualModel(Model):
                         break
         if file_download is None:
             self.error_message = "Unfortunately there is a problem with the file."
-            threading.Timer(3.0, self.clear_error_message).start()
+            self.schedule_error_clear(3.0)
             return
 
         download_remote_file(
             remote_folder, f"plot_wfn_kp_{kpoint}_kb_{band}.cube", file_download
         )
-
-    def clear_error_message(self):
-        self.error_message = ""

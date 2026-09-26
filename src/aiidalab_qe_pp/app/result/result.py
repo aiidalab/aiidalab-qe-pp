@@ -126,6 +126,19 @@ class PpResultsPanel(ResultsPanel[PpResultsModel]):
         self.tabs.selected_index = 0
         self.rendered = True
 
+    def close(self):
+        if getattr(self, "_pp_closed", False):
+            return
+        self._pp_closed = True
+        if hasattr(self, "tabs"):
+            self.tabs.unobserve(self._on_tab_change, "selected_index")
+            for child in self.tabs.children:
+                child.close()
+            self.tabs.children = ()
+            self.tabs.close()
+            self.tabs.layout.close()
+        super().close()
+
     def _on_tab_change(self, change):
         if (tab_index := change["new"]) is None:
             return
