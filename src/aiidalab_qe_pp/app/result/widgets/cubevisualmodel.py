@@ -10,12 +10,12 @@ import os
 from aiida.orm import StructureData
 from aiida.orm.nodes.process.workflow.workchain import WorkChainNode
 import numpy as np
-import threading
+from aiidalab_qe_pp.app.result.widgets.error_timeout import ErrorTimeoutMixin
 
 from aiidalab_qe_pp.app.utils import download_remote_file
 
 
-class CubeVisualModel(Model):
+class CubeVisualModel(ErrorTimeoutMixin, Model):
     node = tl.Instance(WorkChainNode, allow_none=True)
     input_structure = tl.Instance(Atoms, allow_none=True)
     aiida_structure = tl.Instance(StructureData, allow_none=True)
@@ -82,12 +82,9 @@ class CubeVisualModel(Model):
             self.error_message = (
                 f'<div style="color: red; font-weight: bold;">{message}</div>'
             )
-            threading.Timer(10.0, self.clear_error_message).start()
+            self.schedule_error_clear(10.0)
             return
 
         download_remote_file(
             remote_folder, f"plot_{self.plot_num}.cube", "aiida.fileout"
         )
-
-    def clear_error_message(self):
-        self.error_message = ""

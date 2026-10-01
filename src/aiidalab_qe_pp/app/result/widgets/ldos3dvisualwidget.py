@@ -16,6 +16,11 @@ class Ldos3DVisualWidget(ipw.VBox):
         self._model.fetch_data()
         self.rendered = False
 
+    def close(self):
+        if hasattr(self, "_model"):
+            self._model.cancel_error_timeout()
+        super().close()
+
     def render(self):
         if self.rendered:
             return
