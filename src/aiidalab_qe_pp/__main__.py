@@ -1,11 +1,12 @@
-from aiida.common.exceptions import NotExistent
-import subprocess
-from aiida.orm import load_code
-from aiida import load_profile
-import click
-from pathlib import Path
-import shutil
 import os
+import shutil
+import subprocess
+from pathlib import Path
+
+import click
+from aiida import load_profile
+from aiida.common.exceptions import NotExistent
+from aiida.orm import load_code
 
 """
 Automatic installation of Python code for python3@localhost.
@@ -137,6 +138,28 @@ def post_install():
         subprocess.run(command, check=True)
     else:
         print("Code critic2@localhost is already installed! Nothing to do here.")
+
+
+@cli.command(help="Verify all executables and AiiDA codes created by post-install.")
+@click.option("-p", "--profile", default="default", help="AiiDA profile name.")
+def verify_post_install(profile):
+    load_profile(profile)
+    failures = []
+
+    for code_label in ("python3@localhost", "critic2@localhost"):
+        try:
+            load_code(code_label)
+        except NotExistent:
+            failures.append(f"AiiDA code {code_label} is not configured")
+
+    if not critic_executable.is_file() or not os.access(critic_executable, os.X_OK):
+        failures.append(
+            f"Critic2 executable is missing or not executable: {critic_executable}"
+        )
+
+    if failures:
+        raise click.ClickException("; ".join(failures))
+    click.echo("QE-PP post-install setup is valid.")
 
 
 if __name__ == "__main__":
