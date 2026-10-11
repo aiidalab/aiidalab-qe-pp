@@ -148,14 +148,22 @@ def verify_post_install(profile):
 
     for code_label in ("python3@localhost", "critic2@localhost"):
         try:
-            load_code(code_label)
+            code = load_code(code_label)
         except NotExistent:
             failures.append(f"AiiDA code {code_label} is not configured")
-
-    if not critic_executable.is_file() or not os.access(critic_executable, os.X_OK):
-        failures.append(
-            f"Critic2 executable is missing or not executable: {critic_executable}"
-        )
+        else:
+            executable = code.filepath_executable
+            if not executable:
+                failures.append(f"AiiDA code {code_label} executable is not set")
+                continue
+            filepath = Path(executable)
+            failure_prefix = f"AiiDA code {code_label} executable is"
+            if not filepath.exists():
+                failures.append(f"{failure_prefix} missing: {executable}")
+            elif not filepath.is_file():
+                failures.append(f"{failure_prefix} not a file: {executable}")
+            elif not os.access(filepath, os.X_OK):
+                failures.append(f"{failure_prefix} not executable: {executable}")
 
     if failures:
         raise click.ClickException("; ".join(failures))
