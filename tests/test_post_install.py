@@ -69,4 +69,4 @@ def test_verify_post_install_reports_non_executable_code_path(monkeypatch, tmp_p
     result = CliRunner().invoke(plugin_cli.cli, ["verify-post-install"])
 
     assert result.exit_code != 0
-    assert "critic2@localhost executable is missing" in result.output
+    assert "critic2@localhost executable is not executable" in result.output
