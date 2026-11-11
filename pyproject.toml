@@ -47,8 +47,8 @@ Homepage = "https://github.com/AndresOrtegaGuerrero/aiidalab-qe-pp"
 [project.entry-points."aiida.workflows"]
 "pp_app.pp" = "aiidalab_qe_pp.workflows.ppworkchain:PPWorkChain"
 
-[project.entry-points."aiidalab_qe.properties"]
-"pp" = "aiidalab_qe_pp.app:pp"
+[project.entry-points."aiidalab_qe.plugins"]
+"pp" = "aiidalab_qe_pp.app:PpPlugin"
 
 [project.scripts]
 "aiidalab-qe-pp" = "aiidalab_qe_pp.__main__:cli"

@@ -1,33 +1,43 @@
-from aiidalab_qe.common.panel import PluginOutline
+"""AiiDAlab QE plugin for post-processing (PP)."""
 
-from aiidalab_qe_pp.app.code import PpResourceSettingsModel, PpResourceSettingsPanel
-
-
-from aiidalab_qe_pp.app.workchain import workchain_and_builder
-from aiidalab_qe_pp.app.model import PpConfigurationSettingsModel
-from aiidalab_qe_pp.app.setting import PpConfigurationSettingPanel
-
-from aiidalab_qe_pp.app.result.model import PpResultsModel
-from aiidalab_qe_pp.app.result.result import PpResultsPanel
+from aiidalab_qe.plugins import QeAppPlugin
 
 
-class PpPluginOutline(PluginOutline):
-    title = "Post-processing (PP)"
+class PpPlugin(QeAppPlugin):
+    @property
+    def outline(self) -> str:
+        return "Post-processing (PP)"
 
+    def configuration(self):
+        from aiidalab_qe_pp.app.model import PpConfigurationSettingsModel
+        from aiidalab_qe_pp.app.setting import PpConfigurationSettingPanel
 
-pp = {
-    "outline": PpPluginOutline,
-    "configuration": {
-        "panel": PpConfigurationSettingPanel,
-        "model": PpConfigurationSettingsModel,
-    },
-    "resources": {
-        "panel": PpResourceSettingsPanel,
-        "model": PpResourceSettingsModel,
-    },
-    "result": {
-        "panel": PpResultsPanel,
-        "model": PpResultsModel,
-    },
-    "workchain": workchain_and_builder,
-}
+        return {
+            "panel": PpConfigurationSettingPanel,
+            "model": PpConfigurationSettingsModel,
+        }
+
+    def resources(self):
+        from aiidalab_qe_pp.app.code import (
+            PpResourceSettingsModel,
+            PpResourceSettingsPanel,
+        )
+
+        return {
+            "panel": PpResourceSettingsPanel,
+            "model": PpResourceSettingsModel,
+        }
+
+    def result(self):
+        from aiidalab_qe_pp.app.result.model import PpResultsModel
+        from aiidalab_qe_pp.app.result.result import PpResultsPanel
+
+        return {
+            "panel": PpResultsPanel,
+            "model": PpResultsModel,
+        }
+
+    def workchain(self):
+        from aiidalab_qe_pp.app.workchain import workchain_and_builder
+
+        return workchain_and_builder
