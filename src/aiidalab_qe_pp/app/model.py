@@ -113,13 +113,12 @@ class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
     lsign = tl.Bool(False)
 
     def fetch_data(self):
-        structure = self.input_structure
-        if structure is None:
+        if self.input_structure is None:
             self.bands_calc_list = []
             self.nscf_calc_list = []
             return
-        self.bands_calc_list = self.get_available_pwcalcs(structure, "bands")
-        self.nscf_calc_list = self.get_available_pwcalcs(structure, "nscf")
+        self.bands_calc_list = self.get_available_pwcalcs(self.input_structure, "bands")
+        self.nscf_calc_list = self.get_available_pwcalcs(self.input_structure, "nscf")
 
     def update_pwcalc_avail_options(self, _=None):
         """Update the available PW calculations based on the selected calculation type."""
@@ -149,15 +148,14 @@ class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
             self.pwcalc_avail_displayed = "none"
 
     def on_input_structure_change(self, _=None):
-        structure = self.input_structure
-        if structure is None:
+        if self.input_structure is None:
             self.structure_selected = self._get_default("structure_selected")
             return
         self.structure_selected = f"""<div style="line-height: 140%; padding-top: 0px; padding-bottom: 10px; color: green;">
-            Structure selected PK: {structure.pk}.
+            Structure selected PK: {self.input_structure.pk}.
             </div>"""
 
-        if structure.pbc == (True, True, True):
+        if self.input_structure.pbc == (True, True, True):
             self.calc_stm = False
             self.disable_calc_stm = True
 
