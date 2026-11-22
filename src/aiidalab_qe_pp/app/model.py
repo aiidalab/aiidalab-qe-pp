@@ -113,8 +113,13 @@ class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
     lsign = tl.Bool(False)
 
     def fetch_data(self):
-        self.bands_calc_list = self.get_available_pwcalcs(self.input_structure, "bands")
-        self.nscf_calc_list = self.get_available_pwcalcs(self.input_structure, "nscf")
+        structure = self.input_structure
+        if structure is None:
+            self.bands_calc_list = []
+            self.nscf_calc_list = []
+            return
+        self.bands_calc_list = self.get_available_pwcalcs(structure, "bands")
+        self.nscf_calc_list = self.get_available_pwcalcs(structure, "nscf")
 
     def update_pwcalc_avail_options(self, _=None):
         """Update the available PW calculations based on the selected calculation type."""
@@ -130,9 +135,13 @@ class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
             self.pwcalc_avail_displayed = "block"
         else:
             # Disable calculations and clear options if no calculations are available
-            self.no_avail_cals = f"""<div style="line-height: 140%; padding-top: 0px; padding-bottom: 10px; color: red;">
+            self.no_avail_cals = (
+                f"""<div style="line-height: 140%; padding-top: 0px; padding-bottom: 10px; color: red;">
             No {self.pwcalc_type} calculations available for the selected structure. Please change the pw.x calculation type. If there are no calculations available please selected a different structure.
             </div>"""
+                if self.structure_uuid
+                else ""
+            )
 
             self.disable_all_calcs()
             self.pwcalc_avail_options = []
@@ -140,14 +149,17 @@ class PpConfigurationSettingsModel(PanelModel, HasInputStructure):
             self.pwcalc_avail_displayed = "none"
 
     def on_input_structure_change(self, _=None):
-        if self.input_structure:
-            self.structure_selected = """<div style="line-height: 140%; padding-top: 0px; padding-bottom: 10px; color: green;">
-            Structure selected PK: {}.
-            </div>""".format(self.input_structure.pk)
+        structure = self.input_structure
+        if structure is None:
+            self.structure_selected = self._get_default("structure_selected")
+            return
+        self.structure_selected = f"""<div style="line-height: 140%; padding-top: 0px; padding-bottom: 10px; color: green;">
+            Structure selected PK: {structure.pk}.
+            </div>"""
 
-            if self.input_structure.pbc == (True, True, True):
-                self.calc_stm = False
-                self.disable_calc_stm = True
+        if structure.pbc == (True, True, True):
+            self.calc_stm = False
+            self.disable_calc_stm = True
 
     def on_pwcalc_avail_change(self, _=None):
         if not self.pwcalc_avail:
