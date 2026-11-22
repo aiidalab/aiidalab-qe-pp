@@ -590,18 +590,17 @@ class PpConfigurationSettingPanel(
             self.stm_parameters,
         ]
         self.rendered = True
-        self._initial_view()
+        self._refresh_structure()
 
-    def _initial_view(self):
-        self._get_data()
+    def _refresh_structure(self):
+        self._model.on_input_structure_change()
+        self._model.fetch_data()
         self._model.update_pwcalc_avail_options()
 
     def _on_input_structure_change(self, _):
         self.refresh(specific="structure")
-        self._model.on_input_structure_change()
-
-    def _get_data(self):
-        self._model.fetch_data()
+        if self.rendered:
+            self._refresh_structure()
 
     def _update_pwcalc_avail_options(self, _):
         self._model.update_pwcalc_avail_options()
